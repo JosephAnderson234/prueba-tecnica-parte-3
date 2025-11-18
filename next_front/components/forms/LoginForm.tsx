@@ -10,7 +10,7 @@ export default function LoginForm() {
 
     const params = useSearchParams();
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginRequest>()
-
+    const credentialErros = useSearchParams().get("error") === "CredentialsSignin";
     const onSubmit = (data: LoginRequest) => {
         signIn("credentials", {
             username: data.username,
@@ -58,10 +58,11 @@ export default function LoginForm() {
                         </div>
                     </div>
                     
-                    {(errors.username || errors.password) && (
+                    {(errors.username || errors.password || credentialErros) && (
                         <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                             {errors.username && <p className="text-sm text-red-600">El usuario es obligatorio</p>}
                             {errors.password && <p className="text-sm text-red-600">La contraseña debe tener al menos 6 caracteres</p>}
+                            {credentialErros && <p className="text-sm text-red-600">Credenciales incorrectas</p>}
                         </div>
                     )}
                     
