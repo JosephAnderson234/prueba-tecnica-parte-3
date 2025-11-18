@@ -25,7 +25,6 @@ const authOptions: NextAuthOptions = {
                     const token = response.data?.access_token;
                     //como solo tenemos el username dentro del token, y no se ha implementado un /me en el backend, solo decodificamos el token para obtener el username
                     const claims = token ? jwtDecode<JwtPayload>(token) : null;
-
                     if (!token) return null;
                     
                     //we have just one admin, and this is not in the database, so we hardcode the id, but it should be fetched from the database in a real and more complex app
@@ -66,7 +65,6 @@ const authOptions: NextAuthOptions = {
                 session.user = {
                     username: username as string || "unknown",
                 };
-
                 session.accessToken = (token.accessToken as string) || ""
             } catch (err) {
                 // No queremos que una excepción aquí rompa la respuesta del endpoint

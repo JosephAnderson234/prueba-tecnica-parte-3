@@ -7,29 +7,21 @@ export async function proxy(request: NextRequest) {
     const pathname = request.nextUrl.pathname
 
     const isAuth = !!token
-
-    const pathsProtected = ['/']
-    const isPathProtected = pathsProtected.some((path) => pathname.startsWith(path))
-
     const isAuthPage = pathname.startsWith('/login')
-
-    //we should map when we are logged and not
-    if (isAuth) {
-        if (isAuthPage) {
-            const dashboardUrl = new URL('/', request.url)
-            return NextResponse.redirect(dashboardUrl)
-        }
-
-        return NextResponse.next()
+    // Si está autenticado y está en página de login, redirigir al home
+    if (isAuth && isAuthPage) {
+        const dashboardUrl = new URL('/', request.url)
+        return NextResponse.redirect(dashboardUrl)
     }
-    //not logged
-    if (isPathProtected) {
+
+    // Si NO está autenticado y NO está en página de login, redirigir a login
+    if (!isAuth && !isAuthPage) {
         const loginUrl = new URL('/login', request.url)
         loginUrl.searchParams.set('callbackUrl', request.nextUrl.pathname + request.nextUrl.search)
         return NextResponse.redirect(loginUrl)
     }
 
-
+    // En cualquier otro caso, permitir acceso
     return NextResponse.next()
 }
 
