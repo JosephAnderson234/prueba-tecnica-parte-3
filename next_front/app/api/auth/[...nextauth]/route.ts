@@ -12,14 +12,14 @@ const authOptions: NextAuthOptions = {
         CredentialsProvider({
             name: "Credentials",
             credentials: {
-                email: { label: "email", type: "email" },
+                username: { label: "username", type: "text" },
                 password: { label: "Contraseña", type: "password" },
             },
             async authorize(credentials: LoginRequest | undefined) {
                 try {
                     if (!credentials) return null;
                     const response = await login({
-                        email: credentials.email,
+                        username: credentials.username,
                         password: credentials.password
                     })
                     const token = response.data?.access_token;
@@ -78,8 +78,7 @@ const authOptions: NextAuthOptions = {
         },
     },
     pages: {
-        signIn: "/auth/login",
-        newUser: "/auth/register",
+        signIn: "/login"
     },
     session: {
         strategy: "jwt",
