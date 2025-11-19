@@ -1,3 +1,5 @@
+"use server";
+
 import BackendFailResponse from "@/interfaces/common/backendFailResponse";
 import { ServerResponse } from "@/interfaces/common/serverResponse";
 import loaderEnv from "@/utils/loaderEnv";

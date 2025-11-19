@@ -1,3 +1,5 @@
+"use server";
+
 import { Case, CaseCreateRequest } from "@/interfaces/cases";
 import BackendFailResponse from "@/interfaces/common/backendFailResponse";
 import { ServerResponse } from "@/interfaces/common/serverResponse";
