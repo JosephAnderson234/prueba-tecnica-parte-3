@@ -1,16 +1,11 @@
 import CasePage from "@/components/cases/CasePage";
 import { getCaseById } from "@/services/case/getById";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
 
     const caseData = await getCaseById(Number(id));
-    
-    // Si es unauthorized, redirigir a login
-    if (caseData.status === 'unauthorized') {
-        redirect('/login');
-    }
     
     if (caseData.status === 'error' || !caseData.data) {
         // Si el error es por caso no encontrado (404), usar notFound()

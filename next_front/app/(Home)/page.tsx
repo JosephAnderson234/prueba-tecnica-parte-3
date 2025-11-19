@@ -1,15 +1,10 @@
 import { getAllCases } from "@/services/case/getAll";
 import CardList from '../../components/cases/CaseList';
 import CreateModal from '../../components/modals/HandleCreateModal';
-import { redirect } from "next/navigation";
 
 export default async function Home() {
 	const allCases = await getAllCases();
 	
-	// Si es unauthorized, redirigir a login
-	if (allCases.status === 'unauthorized') {
-		redirect('/login');
-	}
 	
 	if (allCases.status === 'error' || !allCases.data) {
 		throw new Error(allCases.message || 'Error loading cases');
