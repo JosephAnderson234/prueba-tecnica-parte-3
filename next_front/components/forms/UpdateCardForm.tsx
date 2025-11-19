@@ -6,7 +6,6 @@ import { updateCase } from "@/services/case/update";
 import { useState } from "react";
 import { ModeForm } from "@/interfaces/components/forms";
 import { useRouter } from "next/navigation";
-import { useHandleUnauthorized } from "@/utils/useHandleUnauthorized";
 
 export const UpdateCardForm = ({ initialData }: { initialData: Case }) => {
     const [mode, setMode] = useState<ModeForm>('view');
@@ -18,16 +17,12 @@ export const UpdateCardForm = ({ initialData }: { initialData: Case }) => {
         }
     });
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [responseStatus, setResponseStatus] = useState<"success" | "error" | "unauthorized">();
     const router = useRouter();
-
-    useHandleUnauthorized(responseStatus);
 
     const onSubmit = async (data: CaseUpdateRequest) => {
         setErrorMessage(null);
 
         const result = await updateCase(initialData.id, data);
-        setResponseStatus(result.status);
 
         if (result.status === "error") {
             setErrorMessage(result.message || "Error al actualizar el caso");
