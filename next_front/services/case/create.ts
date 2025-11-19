@@ -28,8 +28,22 @@ export const createCase = async (caseData: CaseCreateRequest): Promise<ServerRes
         });
 
         if (!response.ok) {
-            const res = await response.json() as BackendFailResponse;
-            throw new Error(res.msg || 'Error creating case');
+            try {
+                const contentType = response.headers.get('content-type');
+                if (contentType?.includes('application/json')) {
+                    const res = await response.json() as BackendFailResponse;
+                    throw new Error(res.msg || `Error al crear caso: ${response.status}`);
+                } else {
+                    throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+                }
+            } catch (parseError) {
+                throw new Error(`Error al procesar respuesta del servidor: ${response.status}`);
+            }
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType?.includes('application/json')) {
+            throw new Error('Respuesta del servidor no es JSON válido');
         }
 
         const createdCase = await response.json() as Case;

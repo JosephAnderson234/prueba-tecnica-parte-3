@@ -21,11 +21,27 @@ export const getAllCases = async (): Promise<ServerResponse<Case[]>> => {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
             },
         });
+        
         if (!response.ok) {
-            const res = await response.json()  as BackendFailResponse;
-            throw new Error(res.msg || 'Error fetching cases');
+            try {
+                const contentType = response.headers.get('content-type');
+                if (contentType?.includes('application/json')) {
+                    const res = await response.json() as BackendFailResponse;
+                    throw new Error(res.msg || `Error del servidor: ${response.status}`);
+                } else {
+                    throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+                }
+            } catch (parseError) {
+                throw new Error(`Error al procesar respuesta del servidor: ${response.status}`);
+            }
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType?.includes('application/json')) {
+            throw new Error('Respuesta del servidor no es JSON válido');
         }
 
         const cases = await response.json() as Case[];

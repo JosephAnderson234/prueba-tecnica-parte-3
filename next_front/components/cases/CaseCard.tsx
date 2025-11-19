@@ -49,10 +49,9 @@ export default function CaseCard({data}: {data: Case}) {
 
     return (
         <div 
-            onClick={() => router.push(`/${data.id}`)}
-            className="group relative bg-white border-2 border-gray-200 rounded-2xl p-6 shadow-md hover:shadow-2xl hover:border-base-primary transition-all duration-300 cursor-pointer overflow-hidden"
+            
+            className="group relative bg-white border-2 border-gray-200 rounded-2xl p-6 shadow-md hover:shadow-2xl hover:border-base-primary transition-all duration-300 overflow-hidden"
         >
-            {/* Decoración de fondo en hover */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-base-primary opacity-0 group-hover:opacity-5 rounded-full -mr-16 -mt-16 transition-opacity duration-300"></div>
             
             <div className="relative z-10">
@@ -70,11 +69,11 @@ export default function CaseCard({data}: {data: Case}) {
                     {data.nombre}
                 </h3>
                 
-                <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-5 min-h-[3.75rem]">
+                <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-5 min-h-15">
                     {data.descripcion}
                 </p>
                 
-                <div className="pt-4 border-t border-gray-100 group-hover:border-base-primary/30 transition-colors">
+                <div className="pt-4 border-t border-gray-100 group-hover:border-base-primary/30 transition-colors cursor-pointer" onClick={() => router.push(`/${data.id}`)}>
                     <div className="flex items-center justify-between text-base-primary font-bold text-sm">
                         <span className="group-hover:translate-x-1 transition-transform">Ver detalles</span>
                         <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

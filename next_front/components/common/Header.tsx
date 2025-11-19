@@ -1,5 +1,6 @@
 "use client";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function Header () {
@@ -14,7 +15,7 @@ export default function Header () {
     
     return (
         <header className="w-full bg-base-primary text-white px-6 py-4 flex justify-between items-center">
-            <h1 className="text-xl font-bold">Administración de Casos</h1>
+            <Link href="/" className="text-xl font-bold">Administración de Casos</Link>
             {session?.user && (
                 <div>
                     Bienvenido, {session.user.username}

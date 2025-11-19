@@ -25,8 +25,22 @@ export const updateCase = async (id: number, updateData: CaseUpdateRequest): Pro
         });
 
         if (!response.ok) {
-            const res = await response.json() as BackendFailResponse;
-            throw new Error(res.msg || 'Error updating case');
+            try {
+                const contentType = response.headers.get('content-type');
+                if (contentType?.includes('application/json')) {
+                    const res = await response.json() as BackendFailResponse;
+                    throw new Error(res.msg || `Error al actualizar caso: ${response.status}`);
+                } else {
+                    throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+                }
+            } catch (parseError) {
+                throw new Error(`Error al procesar respuesta del servidor: ${response.status}`);
+            }
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType?.includes('application/json')) {
+            throw new Error('Respuesta del servidor no es JSON válido');
         }
 
         const updatedCase = await response.json() as Case;
