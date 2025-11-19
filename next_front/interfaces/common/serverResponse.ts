@@ -1,5 +1,5 @@
 export interface ServerResponse<T> {
     data?: T;
     message?: string;
-    status: "success" | "error";
+    status: "success" | "error" | "unauthorized";
 }

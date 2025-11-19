@@ -28,6 +28,14 @@ export const createCase = async (caseData: CaseCreateRequest): Promise<ServerRes
         });
 
         if (!response.ok) {
+            // Si es 401, retornar unauthorized para forzar logout
+            if (response.status === 401) {
+                return {
+                    status: 'unauthorized',
+                    message: 'Sesión expirada',
+                };
+            }
+            
             try {
                 const contentType = response.headers.get('content-type');
                 if (contentType?.includes('application/json')) {

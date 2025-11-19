@@ -4,23 +4,30 @@ import { CaseCreateRequest } from "@/interfaces/cases";
 import { useForm } from "react-hook-form";
 import { createCase } from "@/services/case/create";
 import { useState } from "react";
+import { useHandleUnauthorized } from "@/utils/useHandleUnauthorized";
 
 export default function CreateCardForm({onClose}: {onClose: () => void}) {
 
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<CaseCreateRequest>();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [responseStatus, setResponseStatus] = useState<"success" | "error" | "unauthorized">();
+    
+    useHandleUnauthorized(responseStatus);
 
     const onSubmit = async (data: CaseCreateRequest) => {
         setErrorMessage(null);
         
         const result = await createCase(data);
+        setResponseStatus(result.status);
         
         if (result.status === "error") {
             setErrorMessage(result.message || "Error al crear el caso");
             return;
         }
         
-        onClose();
+        if (result.status === "success") {
+            onClose();
+        }
     };
 
     return (

@@ -24,6 +24,14 @@ export const getCaseById = async (id: number): Promise<ServerResponse<Case>> => 
         });
 
         if (!response.ok) {
+            // Si es 401, retornar unauthorized para forzar logout
+            if (response.status === 401) {
+                return {
+                    status: 'unauthorized',
+                    message: 'Sesión expirada',
+                };
+            }
+            
             // Si es 404, mensaje específico
             if (response.status === 404) {
                 return {

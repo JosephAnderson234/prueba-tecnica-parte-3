@@ -6,10 +6,11 @@ import { updateCase } from "@/services/case/update";
 import { useState } from "react";
 import { ModeForm } from "@/interfaces/components/forms";
 import { useRouter } from "next/navigation";
+import { useHandleUnauthorized } from "@/utils/useHandleUnauthorized";
 
 export const UpdateCardForm = ({ initialData }: { initialData: Case }) => {
     const [mode, setMode] = useState<ModeForm>('view');
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<CaseUpdateRequest>({
+    const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<CaseUpdateRequest>({
         defaultValues: {
             nombre: initialData.nombre,
             descripcion: initialData.descripcion,
@@ -17,30 +18,48 @@ export const UpdateCardForm = ({ initialData }: { initialData: Case }) => {
         }
     });
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [responseStatus, setResponseStatus] = useState<"success" | "error" | "unauthorized">();
     const router = useRouter();
+
+    useHandleUnauthorized(responseStatus);
+
     const onSubmit = async (data: CaseUpdateRequest) => {
         setErrorMessage(null);
 
         const result = await updateCase(initialData.id, data);
+        setResponseStatus(result.status);
 
         if (result.status === "error") {
             setErrorMessage(result.message || "Error al actualizar el caso");
             return;
         }
 
-        router.refresh();
+        if (result.status === "success") {
+            setMode('view');
+            router.refresh();
+        }
     };
 
     const handlerCancelEdit = () => {
+        // Resetear formulario a valores iniciales
+        reset({
+            nombre: initialData.nombre,
+            descripcion: initialData.descripcion,
+            estado: initialData.estado,
+        });
+        setErrorMessage(null);
         setMode('view');
-        // Reset form values to initial data
-        register("nombre").onChange({ target: { value: initialData.nombre } });
-        register("descripcion").onChange({ target: { value: initialData.descripcion } });
-        register("estado").onChange({ target: { value: initialData.estado } });
     }
 
     return (
         <>
+        
+            <div>
+                <button onClick={() => router.back()} className="mb-4 px-4 py-2 border border-gray-300 text-text rounded-lg hover:bg-gray-50 transition-colors font-semibold cursor-pointer">
+                    Atrás
+                </button>
+            </div>
+
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div>
                     <label htmlFor="nombre" className="block text-sm font-semibold text-text mb-2">
@@ -123,16 +142,8 @@ export const UpdateCardForm = ({ initialData }: { initialData: Case }) => {
                     </button>
                 ) : (
                     <button
-                        onClick={() => setMode('view')}
-                        className="mt-4 px-6 py-3 border border-gray-300 text-text rounded-lg hover:bg-gray-50 transition-colors font-semibold"
-                    >
-                        Cancelar Edición
-                    </button>
-                )}
-                {mode === 'edit' && (
-                    <button
                         onClick={handlerCancelEdit}
-                        className="mt-4 ml-4 px-6 py-3 border border-gray-300 text-text rounded-lg hover:bg-gray-50 transition-colors font-semibold"
+                        className="mt-4 px-6 py-3 border border-gray-300 text-text rounded-lg hover:bg-gray-50 transition-colors font-semibold"
                     >
                         Cancelar Edición
                     </button>
